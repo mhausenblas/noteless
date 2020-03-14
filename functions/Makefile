@@ -19,10 +19,6 @@ up:
 
 deploy: build up
 
-frontendup:
-	aws s3api create-bucket --bucket ${NOTELESS_FRONTEND_BUCKET} --create-bucket-configuration LocationConstraint=${TARGET_REGION} --region ${TARGET_REGION}
-	aws s3 website s3://${NOTELESS_FRONTEND_BUCKET}/ --index-document index.html
-
 showapi: 
 	@aws cloudformation describe-stacks --stack-name ${NOTELESS_STACK} --query "Stacks[0].Outputs[?OutputKey=='NotelessAPIURL'].OutputValue" --output text
 
