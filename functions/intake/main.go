@@ -52,9 +52,9 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	if err != nil {
 		return serverError(fmt.Errorf("Can't rekognize: %v", err))
 	}
-
-	log.Println("Rekognition results:")
-	log.Print(result)
+	if len(result.TextDetections) > 0 {
+		log.Printf("Got %v results from Rekognition", len(result.TextDetections))
+	}
 	output, err := json.Marshal(result)
 	if err != nil {
 		return serverError(fmt.Errorf("Can't encode results: %v", err))
