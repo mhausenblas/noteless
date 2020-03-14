@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -39,7 +40,7 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	if err != nil {
 		return serverError(fmt.Errorf("Can't decode base64 string of snap: %v", err))
 	}
-	fmt.Printf("Received image of size %v bytes in good order\n", len(decodedSnapImage))
+	log.Printf("Received image of size %v bytes in good order\n", len(decodedSnapImage))
 
 	// 1. extract text via Rekognition:
 	svc := rekognition.New(session.New())
@@ -51,8 +52,10 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	if err != nil {
 		return serverError(fmt.Errorf("Can't rekognize: %v", err))
 	}
-	// fmt.Printf("Rekognition results:\n%v\n", result)
-	output, err := json.Marshal(result.TextDetections)
+
+	log.Println("Rekognition results:")
+	log.Print(result)
+	output, err := json.Marshal(result)
 	if err != nil {
 		return serverError(fmt.Errorf("Can't encode results: %v", err))
 	}
