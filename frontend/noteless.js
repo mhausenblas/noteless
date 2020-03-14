@@ -7,7 +7,7 @@
     const result = document.querySelector('#result')
     const processbtn = document.querySelector('#process')
 
-    navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: "environment" } }, audio: false })
         .then((stream) => {
             video.srcObject = stream
             video.play()
