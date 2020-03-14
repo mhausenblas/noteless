@@ -41,7 +41,7 @@
         .then((res) => {
             res.json().then((content) => {
                 console.log(content);
-                result.innerHTML = content[0];
+                result.innerHTML = content;
             })
         })
     })
