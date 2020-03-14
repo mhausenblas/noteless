@@ -32,16 +32,6 @@ canvas {
     display: none;
 }
 
-ul {
-    list-style-type: none;
-}
-
-#box {
-    display: block;
-    width: 400px;
-    margin: 0 auto;
-}
-
 #result {
     padding: 10px;
 }
@@ -50,9 +40,10 @@ ul {
     width: 90%;
     min-height: 60%;
     border: "1px solid #e0e0e0";
-     -webkit-border-radius: 6px;
+    -webkit-border-radius: 6px;
     -moz-border-radius: 6px;
     border-radius: 6px;
+    padding: 10px;
 }
 
 .flat {
