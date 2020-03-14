@@ -39,8 +39,12 @@
         })
         .then((res) => {
             res.json().then((content) => {
-                console.log(content);
-                result.innerHTML = content;
+                console.log(content.TextDetections);
+                var res = "Here's what I detected:\n";
+                for (var i = 0; i < content.TextDetections.length; i++) {
+                    res += content.TextDetections[i].DetectedText + "\n";
+                }
+                result.innerHTML = res;
             })
         })
     })
