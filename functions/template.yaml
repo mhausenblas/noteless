@@ -37,8 +37,8 @@ Resources:
               Action:
               - "s3:*"
               Resource:
-              - !Sub "arn:aws:s3:::${DataBucket}/*"
-              - !Sub "arn:aws:s3:::${DataBucket}"
+              - !Sub "arn:aws:s3:::${NotelessDataBucket}/*"
+              - !Sub "arn:aws:s3:::${NotelessDataBucket}"
             - Effect: Allow
               Action:
                 - "dynamodb:GetItem"
@@ -59,8 +59,6 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: "noteless-data"
-
-  
 
   NotelessDataTable:
     Type: AWS::Serverless::SimpleTable
