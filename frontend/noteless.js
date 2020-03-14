@@ -31,16 +31,17 @@
         // remove the first chunk of "data:image/png;base64,"
         data = data.substring(22)
         // call out to Noteless HTTP API (Lambda functions)
-        fetch('HTTP_API/intake', {
+        fetch('https://st8v3ad9y8.execute-api.eu-west-1.amazonaws.com/v1/intake', {
             method: 'post',
+            mode: 'cors',
             body: JSON.stringify({
                 Image: data
             })
         })
         .then((res) => {
             res.json().then((content) => {
-                result.innerHTML=content;
                 console.log(content);
+                result.innerHTML = content[0];
             })
         })
     })
