@@ -24,7 +24,7 @@ frontendup:
 	aws s3 website s3://${NOTELESS_FRONTEND_BUCKET}/ --index-document index.html
 
 showapi: 
-	shell aws cloudformation describe-stacks --stack-name ${NOTELESS_STACK} --query "Stacks[0].Outputs[?OutputKey=='NLEndpoint'].OutputValue" --output text
+	@aws cloudformation describe-stacks --stack-name ${NOTELESS_STACK} --query "Stacks[0].Outputs[?OutputKey=='NotelessAPIURL'].OutputValue" --output text
 
 destroy:
 	aws cloudformation delete-stack --stack-name ${NOTELESS_STACK}
