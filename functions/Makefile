@@ -3,7 +3,7 @@ NOTELESS_FRONTEND_BUCKET?=noteless-static
 NOTELESS_STACK?=noteless
 TARGET_REGION?=eu-west-1
 
-.PHONY: build buildintake buildiconize up deploy showapi destroy status
+.PHONY: build buildintake buildiconize up deploy frontendup showapi destroy status
 
 build: buildintake buildiconize
 
@@ -21,9 +21,7 @@ deploy: build up
 
 frontendup:
 	aws s3api create-bucket --bucket ${NOTELESS_FRONTEND_BUCKET} --create-bucket-configuration LocationConstraint=${TARGET_REGION} --region ${TARGET_REGION}
-	aws s3api put-bucket-policy --bucket ${NOTELESS_FRONTEND_BUCKET} --policy file://frontend-bucket-policy.json --region ${TARGET_REGION}
 	aws s3 website s3://${NOTELESS_FRONTEND_BUCKET}/ --index-document index.html
-
 
 showapi: 
 	shell aws cloudformation describe-stacks --stack-name ${NOTELESS_STACK} --query "Stacks[0].Outputs[?OutputKey=='NLEndpoint'].OutputValue" --output text
