@@ -42,7 +42,20 @@ ul {
     margin: 0 auto;
 }
 
-#process {
+#result {
+    padding: 10px;
+}
+
+#notes {
+    width: 90%;
+    min-height: 60%;
+    border: "1px solid #e0e0e0";
+     -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+}
+
+.flat {
     -webkit-box-shadow: 2px 2px 17px 3px rgba(0,0,0,0.26);
     -moz-box-shadow: 2px 2px 17px 3px rgba(0,0,0,0.26);
     box-shadow: 2px 2px 17px 3px rgba(0,0,0,0.26);
@@ -54,8 +67,4 @@ ul {
     padding: 10px;
     font-weight: 600;
     font-size: 16px;
-}
-
-#result {
-    padding: 10px;
 }
