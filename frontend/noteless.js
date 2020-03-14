@@ -40,9 +40,9 @@
         .then((res) => {
             res.json().then((content) => {
                 console.log(content.TextDetections);
-                var res = "Here's what I detected:\n";
+                var res = "<h2>Detected:</h2>\n";
                 for (var i = 0; i < content.TextDetections.length; i++) {
-                    res += content.TextDetections[i].DetectedText + "\n";
+                    res += "<p>" + content.TextDetections[i].DetectedText + "</p>\n";
                 }
                 result.innerHTML = res;
             })
