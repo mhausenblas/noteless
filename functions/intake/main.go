@@ -77,8 +77,8 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	if err != nil {
 		return serverError(fmt.Errorf("Can't decode base64 string of snap: %v", err))
 	}
-	fmt.Printf("%+v\n", snap)
 	result := len(decodedSnapImage)
+	fmt.Printf("Received image of size %v bytes in good order\n", result)
 	return events.APIGatewayProxyResponse{
 		StatusCode: http.StatusOK,
 		Headers: map[string]string{
