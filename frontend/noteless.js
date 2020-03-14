@@ -33,7 +33,6 @@
         // call out to Noteless HTTP API (Lambda functions)
         fetch('https://st8v3ad9y8.execute-api.eu-west-1.amazonaws.com/v1/intake', {
             method: 'post',
-            mode: 'no-cors',
             body: JSON.stringify({
                 Image: data
             })
