@@ -36,18 +36,9 @@ ul {
     list-style-type: none;
 }
 
-.grid {
-    display: grid;
-    grid-template-columns: 50% 50%;
-}
-
-.content {
-    padding: 100px 25px;
-}
-
-.inner {
+#box {
     display: block;
-    width: 960px;
+    width: 400px;
     margin: 0 auto;
 }
 

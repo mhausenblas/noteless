@@ -1,9 +1,9 @@
 (function () {
-    const width = 480;
+    const width = 360;
     let height = 0;
 
-    let video = document.querySelector('.camera-feed')
-    let canvas = document.querySelector('.camera-canvas')
+    let video = document.querySelector('#camera-feed')
+    let canvas = document.querySelector('#camera-canvas')
     const result = document.querySelector('#result')
     const processbtn = document.querySelector('#process')
 
