@@ -4,11 +4,11 @@ Description: noteless
 Globals:
   Function:
     Timeout: 60
-  Api:
-    Cors:
-      AllowMethods: "'*'"
-      AllowHeaders: "'*'"
-      AllowOrigin: "'*'"
+#   HttpApi:
+#     Cors:
+#       AllowMethods: "'*'"
+#       AllowHeaders: "'*'"
+#       AllowOrigin: "'*'"
 
 Resources:
   IntakeFunc:
