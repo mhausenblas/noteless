@@ -1,0 +1,81 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: noteless
+Globals:
+  Function:
+    Timeout: 60
+  Api:
+    Cors:
+      AllowMethods: "'*'"
+      AllowHeaders: "'*'"
+      AllowOrigin: "'*'"
+
+Resources:
+  IntakeFunc:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: bin/
+      Handler: intake
+      Runtime: go1.x
+      Tracing: Active
+      Events:
+        ApiEvent:
+          Type: HttpApi
+          Properties:
+            Path: /intake
+            Method: POST
+            ApiId: !Ref FrontendAPI
+      Policies:
+        - AWSLambdaExecute
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+              - "rekognition:DetectText"
+              Resource: '*'
+            - Effect: Allow
+              Action:
+              - "s3:*"
+              Resource:
+              - !Sub "arn:aws:s3:::${DataBucket}/*"
+              - !Sub "arn:aws:s3:::${DataBucket}"
+            - Effect: Allow
+              Action:
+                - "dynamodb:GetItem"
+                - "dynamodb:PutItem"
+                - "dynamodb:Scan"
+                - "dynamodb:UpdateItem"
+              Resource:
+                "Fn::Join":
+                  - ""
+                  - - 'arn:aws:dynamodb:'
+                    - Ref: 'AWS::Region'
+                    - ':'
+                    - Ref: 'AWS::AccountId'
+                    - ':table/'
+                    - Ref: NotelessDataTable
+
+  NotelessDataBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: "noteless-data"
+
+  
+
+  NotelessDataTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      TableName: "Noteless"
+      PrimaryKey:
+        Name: snapid
+        Type: String
+
+  FrontendAPI:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      StageName: v1
+
+Outputs:
+  NotelessAPIURL:
+    Description: "Noteless HTTP API prod URL (Lambda functions)"
+    Value: !Sub "https://${FrontendAPI}.execute-api.${AWS::Region}.amazonaws.com/v1"
