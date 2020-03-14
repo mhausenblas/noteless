@@ -11,6 +11,27 @@ html {
     padding: 0;
 }
 
+body {
+    overflow-x: hidden;
+}
+
+h1 {
+    font-size: 22px;
+    font-weight:600;
+    text-align: center;
+    letter-spacing: 2px;
+    color: #ff9900;
+    margin-bottom: 100px;
+    display: block; 
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin: 30px 0 10px;
+}
+
+canvas {
+    display: none;
+}
+
 ul {
     list-style-type: none;
 }
@@ -18,22 +39,6 @@ ul {
 .grid {
     display: grid;
     grid-template-columns: 50% 50%;
-}
-
-.list {
-    text-align: center;
-}
-
-.title {
-    display: block; 
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    margin: 30px 0 10px;
-}
-
-body {
-    overflow-x: hidden;
 }
 
 .content {
@@ -46,18 +51,16 @@ body {
     margin: 0 auto;
 }
 
-h1 {
+#process {
+    -webkit-box-shadow: 2px 2px 17px 3px rgba(0,0,0,0.26);
+    -moz-box-shadow: 2px 2px 17px 3px rgba(0,0,0,0.26);
+    box-shadow: 2px 2px 17px 3px rgba(0,0,0,0.26);
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    background-color: #ff9900;
+    width: 100px;
+    padding: 10px;
+    font-weight: 600;
     font-size: 16px;
-    font-weight: 700;
-    text-align: center;
-    letter-spacing: 2px;
-    color: #868e96;
-}
-
-header {
-    margin-bottom: 100px;
-}
-
-canvas {
-    display: none;
 }
