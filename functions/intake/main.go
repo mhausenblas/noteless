@@ -11,6 +11,7 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/rekognition"
+	uuid "github.com/satori/go.uuid"
 )
 
 // Snap is the parsed body from frontend's HTTP POST request
@@ -52,26 +53,47 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	if err != nil {
 		return serverError(fmt.Errorf("Can't rekognize: %v", err))
 	}
-	if len(result.TextDetections) > 0 {
-		log.Printf("Got %v results from Rekognition", len(result.TextDetections))
+
+	// 2. if we have results, store image as PNG in S3 bucket
+	//    and insert detections in DynamoDB table (with pointer to S3 bucket)
+	numDetections := len(result.TextDetections)
+	if numDetections > 0 {
+		log.Printf("Got %v results from Rekognition", numDetections)
+		output, err := json.Marshal(result)
+		if err != nil {
+			return serverError(fmt.Errorf("Can't encode results: %v", err))
+		}
+		// generate unique note ID (nUUID for short):
+		nUUID, err := uuid.NewV4()
+		if err != nil {
+			return serverError(err)
+		}
+		// write note image data (in PNG format) to S3 under `raw/$nUUID`
+
+		// put detections as JSON blog into DynamoDB table with snapID = $nUUID
+
+		// generate link with number of raw results, pointing to ../notes/$nUUID
+		noteLink := fmt.Sprintf("Found %v fragments in snap, see <a href=\"../notes/%v\">note</a> for details ...",
+			numDetections, nUUID.String())
+		return events.APIGatewayProxyResponse{
+			StatusCode: http.StatusOK,
+			Headers: map[string]string{
+				"Access-Control-Allow-Origin": "*",
+				"Content-Type":                "application/json",
+			},
+			Body: string(noteLink),
+		}, nil
 	}
-	output, err := json.Marshal(result)
-	if err != nil {
-		return serverError(fmt.Errorf("Can't encode results: %v", err))
-	}
 
-	// TBD: 2. store image as PNG in S3 bucket
-
-	// TBD: 3. insert snap in DynamoDB table (with ref to S3 bucket)
-
-	// Done, send confirmation
+	// In case we haven't detected anything, just confirm receipt and that
+	// we were not able to extract any text and hence not taking the note in:
 	return events.APIGatewayProxyResponse{
 		StatusCode: http.StatusOK,
 		Headers: map[string]string{
 			"Access-Control-Allow-Origin": "*",
 			"Content-Type":                "application/json",
 		},
-		Body: string(output),
+		Body: "In the snap provided, we were not able to detect text and hence didn't create a note.",
 	}, nil
 }
 
