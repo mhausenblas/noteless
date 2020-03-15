@@ -16,3 +16,4 @@
 .DS_Store
 /functions/current-stack.yaml
 bin
+tmp.json
