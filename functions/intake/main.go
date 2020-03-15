@@ -15,6 +15,7 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/rekognition"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	uuid "github.com/satori/go.uuid"
@@ -23,6 +24,11 @@ import (
 // Snap is the parsed body from frontend's HTTP POST request
 type Snap struct {
 	Image string
+}
+
+// Result is the outcome of the operation
+type Result struct {
+	Message string
 }
 
 func serverError(err error) (events.APIGatewayProxyResponse, error) {
@@ -36,10 +42,10 @@ func serverError(err error) (events.APIGatewayProxyResponse, error) {
 	}, nil
 }
 
-// storeClusterSpec stores the cluster spec in a given bucket
+// storeNoteImage stores snap image in S3
 func storeNoteImage(key, img string) (arn.ARN, error) {
-	uploader := s3manager.NewUploader(session.New())
 	imgbucket := os.Getenv("NOTELESS_IMAGE_BUCKET")
+	uploader := s3manager.NewUploader(session.New())
 	loc := fmt.Sprintf("raw/%v.png", key)
 	_, err := uploader.Upload(&s3manager.UploadInput{
 		Bucket: aws.String(imgbucket),
@@ -47,6 +53,29 @@ func storeNoteImage(key, img string) (arn.ARN, error) {
 		Body:   strings.NewReader(img),
 	})
 	return arn.ARN{Partition: "aws", Service: "s3", Resource: imgbucket + "/" + loc}, err
+}
+
+// storeNoteDetections stores Rekognition results (detections) in DynamoDB
+func storeNoteDetections(key, data string) (arn.ARN, error) {
+	notelessTable := os.Getenv("NOTELESS_DETECTIONS_TABLE")
+	svc := dynamodb.New(session.New())
+	// av, err := dynamodbattribute.MarshalMap(r)
+	// if err != nil {
+	// 	panic(fmt.Sprintf("failed to DynamoDB marshal Record, %v", err))
+	// }
+	res, err := svc.PutItem(&dynamodb.PutItemInput{
+		Item: map[string]*dynamodb.AttributeValue{
+			"snapid": {
+				S: aws.String(key),
+			},
+			"detections": {
+				S: aws.String(data),
+			},
+		},
+		TableName: aws.String(notelessTable),
+	})
+	log.Printf("%v", res)
+	return arn.ARN{Partition: "aws", Service: "dynambodb", Resource: notelessTable + "/" + key}, err
 }
 
 func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
@@ -73,10 +102,10 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		return serverError(fmt.Errorf("Can't rekognize: %v", err))
 	}
 
-	// 2. if we have results, store image as PNG in S3 bucket
-	//    and insert detections in DynamoDB table (with pointer to S3 bucket)
+	intakeres := Result{}
 	numDetections := len(result.TextDetections)
-	if numDetections > 0 {
+	switch {
+	case numDetections > 0: // we have detections, store images and detections
 		log.Printf("Got %v results from Rekognition", numDetections)
 		output, err := json.Marshal(result)
 		if err != nil {
@@ -93,31 +122,29 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 			return serverError(err)
 		}
 		log.Printf("Stored notes image in %v", loc.String())
-		// put detections as JSON blog into DynamoDB table with snapID = $nUUID
-		_ = output
-
+		// insert detections as JSON blob into DynamoDB table with snapID = $nUUID
+		loc, err = storeNoteDetections(nUUID.String(), string(output))
+		if err != nil {
+			return serverError(err)
+		}
+		log.Printf("Stored detections in %v", loc.String())
 		// generate link with number of raw results, pointing to ../notes/$nUUID
-		noteLink := fmt.Sprintf("Found %v fragments in snap, see <a href=\"../notes/%v\">note</a> for details ...",
+		intakeres.Message = fmt.Sprintf("Found %v fragments in snap, see <a href=\"../notes/%v\">note</a> for details ...",
 			numDetections, nUUID.String())
-		return events.APIGatewayProxyResponse{
-			StatusCode: http.StatusOK,
-			Headers: map[string]string{
-				"Access-Control-Allow-Origin": "*",
-				"Content-Type":                "application/json",
-			},
-			Body: string(noteLink),
-		}, nil
+	default: // we haven't detected anything, confirm intake and no note created
+		intakeres.Message = "In the snap provided, we were not able to detect text and hence didn't create a note."
 	}
-
-	// In case we haven't detected anything, just confirm receipt and that
-	// we were not able to extract any text and hence not taking the note in:
+	irjson, err := json.Marshal(intakeres)
+	if err != nil {
+		return serverError(err)
+	}
 	return events.APIGatewayProxyResponse{
 		StatusCode: http.StatusOK,
 		Headers: map[string]string{
 			"Access-Control-Allow-Origin": "*",
 			"Content-Type":                "application/json",
 		},
-		Body: "In the snap provided, we were not able to detect text and hence didn't create a note.",
+		Body: string(irjson),
 	}, nil
 }
 

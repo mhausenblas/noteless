@@ -21,6 +21,7 @@ Resources:
       Environment:
         Variables:
           NOTELESS_IMAGE_BUCKET: !Sub "${NotelessDataBucket}"
+          NOTELESS_DETECTIONS_TABLE: !Sub "${NotelessDataTable}"
       Events:
         ApiEvent:
           Type: HttpApi
