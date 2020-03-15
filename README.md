@@ -2,14 +2,14 @@
 
 ## Usage
 
-The **noteless** serverless demo allows you to do two things:
+The **noteless** demo allows you to do two things:
 
 - [capture](capture/) text: use your phone to capture notes in print or handwritten version on paper
 - [analyse](notes/) notes: by applying rules, figure out patterns or find stuff
 
 ## Background
 
-This serverless end-to-end demo uses:
+This is a serverless end-to-end demo and it uses:
 
 1. [Amazon Rekognition](https://aws.amazon.com/rekognition/) for detecting text in images
 2. [AWS Lambda](https://aws.amazon.com/lambda/) for the capture/frontend processing
@@ -18,4 +18,8 @@ This serverless end-to-end demo uses:
 
 You might want to check out the [architecture](https://mhausenblas.info/noteless/docs/design.pdf) and if you want to try it out yourself, 
 the source code is available via [mhausenblas/noteless](https://github.com/mhausenblas/noteless). Kudos go out to Mike Rudolph for [mikerudolph/aws_rekognition_demo](https://github.com/mikerudolph/aws_rekognition_demo) which
-served as a motivation and starting point for this demo.
+served as a starting point for this demo.
+
+The architecture is as follows:
+
+TBD
