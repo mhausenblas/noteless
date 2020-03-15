@@ -8,3 +8,6 @@ build-bin :
 build-img :
 	@docker build -t quay.io/mhausenblas/noteless-listings:$(listings_version) .
 	@docker push quay.io/mhausenblas/noteless-listings:$(listings_version)
+
+deploy:
+	@kubectl apply -f app.yaml
