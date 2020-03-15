@@ -129,7 +129,7 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		}
 		log.Printf("Stored detections in %v", loc.String())
 		// generate link with number of raw results, pointing to ../notes/$nUUID
-		intakeres.Message = fmt.Sprintf("Found %v fragments in snap, see <a href=\"../notes/%v\">note</a> for details ...",
+		intakeres.Message = fmt.Sprintf("Found %v fragments in snap, see <a href=\"../notes/\">note %v</a> for details ...",
 			numDetections, nUUID.String())
 	default: // we haven't detected anything, confirm intake and no note created
 		intakeres.Message = "In the snap provided, we were not able to detect text and hence didn't create a note."
