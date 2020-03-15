@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -13,9 +14,11 @@ import (
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/aws/aws-lambda-go/lambdacontext"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
+	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 	"github.com/aws/aws-sdk-go/service/rekognition"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	uuid "github.com/satori/go.uuid"
@@ -56,32 +59,38 @@ func storeNoteImage(key, img string) (arn.ARN, error) {
 }
 
 // storeNoteDetections stores Rekognition results (detections) in DynamoDB
-func storeNoteDetections(key, data string) (arn.ARN, error) {
+func storeNoteDetections(accountID, region, key string, data *rekognition.DetectTextOutput) (arn.ARN, error) {
 	notelessTable := os.Getenv("NOTELESS_DETECTIONS_TABLE")
+	type Record struct {
+		SnapID     string `json:"snapid"`
+		Detections *rekognition.DetectTextOutput
+	}
+	av, err := dynamodbattribute.MarshalMap(Record{
+		SnapID:     key,
+		Detections: data,
+	})
+	if err != nil {
+		return arn.ARN{}, err
+	}
 	svc := dynamodb.New(session.New())
-	// av, err := dynamodbattribute.MarshalMap(r)
-	// if err != nil {
-	// 	panic(fmt.Sprintf("failed to DynamoDB marshal Record, %v", err))
-	// }
 	res, err := svc.PutItem(&dynamodb.PutItemInput{
-		Item: map[string]*dynamodb.AttributeValue{
-			"snapid": {
-				S: aws.String(key),
-			},
-			"detections": {
-				S: aws.String(data),
-			},
-		},
+		Item:      av,
 		TableName: aws.String(notelessTable),
 	})
 	log.Printf("%v", res)
-	return arn.ARN{Partition: "aws", Service: "dynambodb", Resource: notelessTable + "/" + key}, err
+	return arn.ARN{Partition: "aws", Service: "dynamodb", Region: region, AccountID: accountID, Resource: notelessTable + "/" + key}, err
 }
 
-func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	// extract Account ID from context, needed for DynamoDB result, later:
+	lc, _ := lambdacontext.FromContext(ctx)
+	larn, err := arn.Parse(lc.InvokedFunctionArn)
+	if err != nil {
+		return serverError(fmt.Errorf("Can't determine account ID: %v", err))
+	}
 	// 0. decode the base64 encoded HTTP body, we're expecting the image data there:
 	snap := Snap{}
-	err := json.Unmarshal([]byte(request.Body), &snap)
+	err = json.Unmarshal([]byte(request.Body), &snap)
 	if err != nil {
 		return serverError(fmt.Errorf("Can't parse %v as a snap: %v", request.Body, err))
 	}
@@ -107,10 +116,6 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	switch {
 	case numDetections > 0: // we have detections, store images and detections
 		log.Printf("Got %v results from Rekognition", numDetections)
-		output, err := json.Marshal(result)
-		if err != nil {
-			return serverError(fmt.Errorf("Can't encode results: %v", err))
-		}
 		// generate unique note ID (nUUID for short):
 		nUUID, err := uuid.NewV4()
 		if err != nil {
@@ -123,13 +128,13 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		}
 		log.Printf("Stored notes image in %v", loc.String())
 		// insert detections as JSON blob into DynamoDB table with snapID = $nUUID
-		loc, err = storeNoteDetections(nUUID.String(), string(output))
+		loc, err = storeNoteDetections(larn.AccountID, larn.Region, nUUID.String(), result)
 		if err != nil {
 			return serverError(err)
 		}
 		log.Printf("Stored detections in %v", loc.String())
 		// generate link with number of raw results, pointing to ../notes/$nUUID
-		intakeres.Message = fmt.Sprintf("Found %v fragments in snap, see <a href=\"../notes/\">note %v</a> for details ...",
+		intakeres.Message = fmt.Sprintf("Found %v fragments, see <a href=\"../notes/\">note %v</a>.",
 			numDetections, nUUID.String())
 	default: // we haven't detected anything, confirm intake and no note created
 		intakeres.Message = "In the snap provided, we were not able to detect text and hence didn't create a note."
