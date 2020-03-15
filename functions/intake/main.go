@@ -6,11 +6,17 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"strings"
+
+	"github.com/aws/aws-sdk-go/aws/arn"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/rekognition"
+	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -28,6 +34,19 @@ func serverError(err error) (events.APIGatewayProxyResponse, error) {
 		},
 		Body: fmt.Sprintf("%v", err.Error()),
 	}, nil
+}
+
+// storeClusterSpec stores the cluster spec in a given bucket
+func storeNoteImage(key, img string) (arn.ARN, error) {
+	uploader := s3manager.NewUploader(session.New())
+	imgbucket := os.Getenv("NOTELESS_IMAGE_BUCKET")
+	loc := fmt.Sprintf("raw/%v.png", key)
+	_, err := uploader.Upload(&s3manager.UploadInput{
+		Bucket: aws.String(imgbucket),
+		Key:    aws.String(loc),
+		Body:   strings.NewReader(img),
+	})
+	return arn.ARN{Partition: "aws", Service: "s3", Resource: imgbucket + "/" + loc}, err
 }
 
 func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
@@ -68,9 +87,14 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		if err != nil {
 			return serverError(err)
 		}
-		// write note image data (in PNG format) to S3 under `raw/$nUUID`
-
+		// write note image data (in PNG format) to S3 under `raw/$nUUID.png`
+		loc, err := storeNoteImage(nUUID.String(), string(decodedSnapImage))
+		if err != nil {
+			return serverError(err)
+		}
+		log.Printf("Stored notes image in %v", loc.String())
 		// put detections as JSON blog into DynamoDB table with snapID = $nUUID
+		_ = output
 
 		// generate link with number of raw results, pointing to ../notes/$nUUID
 		noteLink := fmt.Sprintf("Found %v fragments in snap, see <a href=\"../notes/%v\">note</a> for details ...",

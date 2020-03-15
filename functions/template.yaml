@@ -18,6 +18,9 @@ Resources:
       Handler: intake
       Runtime: go1.x
       Tracing: Active
+      Environment:
+        Variables:
+          NOTELESS_IMAGE_BUCKET: !Sub "${NotelessDataBucket}"
       Events:
         ApiEvent:
           Type: HttpApi
