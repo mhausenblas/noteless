@@ -4,8 +4,21 @@
 
 The **noteless** demo allows you to do two things:
 
-- [capture](capture/) text: use your phone to capture notes in print or handwritten version on paper
-- [analyse](notes/) notes: by applying rules, figure out patterns or find stuff
+### Capture
+
+You can [capture](capture/) text, using for example your phone camera to capture notes in print or handwritten versions on paper.
+
+![screenshot capture](docs/screenshot-noteless-capture.png)
+
+### Analyse
+
+Once notes are captured, you can [analyse](notes/) them. By applying OPA Rego rules, **noteless** finds certain predefined commands such as `up` or `go`:
+
+![screenshot analytics](docs/screenshot-noteless-analysis.png)
+
+## Deploy yourself
+
+TBD
 
 ## Background
 
