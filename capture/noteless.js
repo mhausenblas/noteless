@@ -72,7 +72,7 @@
         .then((res) => {
             res.json().then((content) => {
                 console.log(content);
-                result.innerHTML = "<p>" + content +"</p>\n";
+                result.innerHTML = "<p>" + content.Message +"</p>\n";
             })
         })
     })
