@@ -4,7 +4,7 @@
     const listbtn = document.querySelector('#list')
     const rulesbtn = document.querySelector('#rules')
     const commandsbtn = document.querySelector('#commands')
-    const listingURL = 'http://127.0.0.1:9898';
+    const listingURL = 'http://ee2eadc5-serverless-listin-817a-528240680.eu-west-1.elb.amazonaws.com';
 
     listbtn.addEventListener('click', () => {
         fetch(listingURL+'/notes')
