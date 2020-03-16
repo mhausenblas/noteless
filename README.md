@@ -18,7 +18,12 @@ Once notes are captured, you can [analyse](notes/) them. By applying OPA Rego ru
 
 ## Deploy yourself
 
-TBD
+First, create an S3 Bucket for the Lambda code and provide it as an input
+for the [Makefile](https://github.com/mhausenblas/noteless/blob/master/functions/Makefile) as `NOTELESS_BUCKET` when you run `make up`. This sets up
+the Lambda functions, the DynamoDB table, and the S3 data bucket.
+
+For the container part: run first [create-eks-fargate-cluster.sh](https://github.com/mhausenblas/noteless/blob/master/listings/create-eks-fargate-cluster.sh) to set up the EKS on Fargate cluster and then [create-alb.sh](https://github.com/mhausenblas/noteless/blob/master/listings/create-alb.sh) for the ALB 
+Ingress controller. Finally, execute [launch-backend.sh](https://github.com/mhausenblas/noteless/blob/master/listings/launch-backend.sh) to launch the Kubernetes deployment and service. TBD: patching frontends …
 
 ## Background
 
