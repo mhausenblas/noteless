@@ -27,8 +27,8 @@ var (
 	module = `package noteless
 
 # we declare everything a command that is
-# 1. at least two characters long, 2. recognized with at least 96% confidence, and
-# 3. in our command list
+# 1. at least two characters long, 2. recognized with at least 
+# 90% confidence, and 3. in our command list (via iscommand)
 detected_commands[msg] {
 	some i,j
 	dt := input[i].Detections.TextDetections[j].DetectedText
