@@ -39,7 +39,7 @@ mv listings-iam-policy.json.tmp listings-iam-policy.json
 
 # create an IRSA-enabled service account for the ALB IC:
 eksctl create iamserviceaccount \
-       --name noteless-listings \
+       --name listings \
        --namespace serverless \
        --cluster $CLUSTER_NAME \
        --attach-policy-arn $IAM_POLICY_ARN \
@@ -47,4 +47,4 @@ eksctl create iamserviceaccount \
        --override-existing-serviceaccounts
 
 # install ALB IC RBAC and ALB IC itself:
-# kubectl apply -f app.yaml
+kubectl apply -f app.yaml

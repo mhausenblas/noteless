@@ -13,7 +13,7 @@ spec:
       labels:
         app: listings
     spec:
-      serviceAccountName: noteless-listings
+      serviceAccountName: listings
       containers:
       - name: main
         image: quay.io/mhausenblas/noteless-listings:0.2
