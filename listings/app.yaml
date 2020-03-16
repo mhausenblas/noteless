@@ -43,13 +43,22 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: alb
     alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/healthcheck-path: /rules
   labels:
     app: listings
 spec:
   rules:
     - http:
         paths:
-          - path: /*
+          - path: /rules
+            backend:
+              serviceName: listings
+              servicePort: 80
+          - path: /commands
+            backend:
+              serviceName: listings
+              servicePort: 80
+          - path: /notes
             backend:
               serviceName: listings
               servicePort: 80
