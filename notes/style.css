@@ -32,8 +32,22 @@ canvas {
     display: none;
 }
 
+#menu {
+    margin-top: 6px;
+    width: 99%;
+    text-align: right;
+}
+
+#main {
+    width: 80%;
+    text-align: center;
+    border: 1px solid red;
+    margin: 10px auto;
+}
+
 #result {
     padding: 10px;
+    text-align: left;
 }
 
 #notes {
@@ -43,6 +57,7 @@ canvas {
 
 #info {
     margin: 10px;
+    text-align: left;
 }
 
 .flat {
@@ -66,4 +81,5 @@ canvas {
     padding: 3px 3px 0px 2px;
     border: 3px solid #ff9900;
     margin: 7px;
+    text-align: left;
 }

@@ -10,13 +10,18 @@
 </head>
 <body>
     <div id="box">
+        <div id="menu">
+            <a href="../" class="flat">HOME</a>
+            <a href="../notes/" class="flat">NOTES</a>
+        </div>
         <h1>noteless</h1>
-        <button id="process">GO</button>
-        <div id="camera">
+        <div id="main">
+            <button id="process">GO</button>
+            <div id="camera">
             <video id="camera-feed">camera not available</video>
             <canvas id="camera-canvas"></canvas>
+            <div id="result"></div>
         </div>
-        <div id="result"></div>
     </div> 
     <script src="noteless.js" charset="utf-8"></script>
 </body>
