@@ -37,6 +37,7 @@ fargateProfiles:
   - name: defaultfp
     selectors:
       - namespace: serverless
+      - namespace: kube-system
 
 cloudWatch:
   clusterLogging:
@@ -56,3 +57,7 @@ done
 echo "EKS on Fargate cluster $CLUSTER_NAME is ready, configuring it:"
 kubectl create namespace serverless
 kubectl config set-context $(kubectl config current-context) --namespace=serverless
+
+# patch kube-system namespace to run also on Fargate:
+kubectl --namespace kube-system patch deployment coredns \
+        --type json -p='[{"op": "remove", "path": "/spec/template/metadata/annotations/eks.amazonaws.com~1compute-type"}]'
