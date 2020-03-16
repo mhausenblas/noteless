@@ -31,3 +31,21 @@ spec:
     targetPort: 9898
   selector:
     app: listings
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: listings
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+  labels:
+    app: listings
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /*
+            backend:
+              serviceName: listings
+              servicePort: 80
