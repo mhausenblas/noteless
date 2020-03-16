@@ -4,10 +4,10 @@
     const listbtn = document.querySelector('#list')
     const rulesbtn = document.querySelector('#rules')
     const commandsbtn = document.querySelector('#commands')
+    const listingURL = 'http://127.0.0.1:9898';
 
     listbtn.addEventListener('click', () => {
-        // call out to Noteless HTTP API (Lambda functions)
-        fetch('http://127.0.0.1:9898/notes')
+        fetch(listingURL+'/notes')
             .then((res) => {
                 res.json().then((content) => {
                     console.log(content);
@@ -22,8 +22,7 @@
     })
 
     rulesbtn.addEventListener('click', () => {
-        // call out to Noteless HTTP API (Lambda functions)
-        fetch('http://127.0.0.1:9898/rules')
+        fetch(listingURL+'/rules')
             .then((response) => {
                 if (!response.ok) {
                     throw new Error('API call failed');
@@ -41,8 +40,7 @@
     })
 
     commandsbtn.addEventListener('click', () => {
-        // call out to Noteless HTTP API (Lambda functions)
-        fetch('http://127.0.0.1:9898/commands')
+        fetch(listingURL+'/commands')
             .then((res) => {
                 res.json().then((content) => {
                     console.log(content);
