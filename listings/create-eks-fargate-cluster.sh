@@ -29,6 +29,7 @@ kind: ClusterConfig
 metadata:
   name: $CLUSTER_NAME
   region: $TARGET_REGION
+  version: '1.15'
 
 iam:
   withOIDC: true
