@@ -19,3 +19,4 @@ bin
 tmp.json
 /listings/listings
 /listings/nc.json
+listings/alb-ingress-controller.yaml*

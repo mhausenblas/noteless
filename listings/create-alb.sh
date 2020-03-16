@@ -39,9 +39,9 @@ CLUSTER_NAME=noteless
 # download and patch the ALB Ingress Controller (IC) manifest:
 curl $ALB_MANIFEST -o alb-ingress-controller.yaml
 TARGET_VPC=$(aws eks describe-cluster --name $CLUSTER_NAME | jq .cluster.resourcesVpcConfig.vpcId -r)
-sed -i '.tmp' "s|# - --aws-region=vpc-xxxxxx| - --aws-region=$TARGET_REGION|" alb-ingress-controller.yaml
-sed -i '.tmp' "s|# - --cluster-name=devCluster| - --cluster-name=$CLUSTER_NAME|" alb-ingress-controller.yaml
-sed -i '.tmp' "s|# - --aws-vpc-id=vpc-xxxxxx| - --aws-vpc-id=$TARGET_VPC|" alb-ingress-controller.yaml
+sed -i '.tmp' "s|# - --aws-region=vpc-xxxxxx|- --aws-region=$TARGET_REGION|" alb-ingress-controller.yaml
+sed -i '.tmp' "s|# - --cluster-name=devCluster|- --cluster-name=$CLUSTER_NAME|" alb-ingress-controller.yaml
+sed -i '.tmp' "s|# - --aws-vpc-id=vpc-xxxxxx|- --aws-vpc-id=$TARGET_VPC|" alb-ingress-controller.yaml
 
 # create the IAM policy for the ALB, used by the ALB IC service account 
 # to manage ALBs for us (based on Ingress resources we define in the cluster):
