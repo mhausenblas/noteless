@@ -1,0 +1,23 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": [
+                "s3:*"
+            ],
+            "Resource": [
+                "arn:aws:s3:::noteless-data/*",
+                "arn:aws:s3:::noteless-data"
+            ],
+            "Effect": "Allow"
+        },
+        {
+            "Action": [
+                "dynamodb:GetItem",
+                "dynamodb:Scan"
+            ],
+            "Resource": "arn:aws:dynamodb:eu-west-1:ACCOUNTID:table/Noteless",
+            "Effect": "Allow"
+        }
+    ]
+}

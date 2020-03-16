@@ -4,7 +4,7 @@ kind: Deployment
 metadata:
   name: listings
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: listings
@@ -13,6 +13,7 @@ spec:
       labels:
         app: listings
     spec:
+      serviceAccountName: noteless-listings
       containers:
       - name: main
         image: quay.io/mhausenblas/noteless-listings:0.2
