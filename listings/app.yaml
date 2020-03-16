@@ -25,10 +25,14 @@ metadata:
   name: listings
   labels:
     app: listings
+  annotations:
+    alb.ingress.kubernetes.io/target-type: ip
 spec:
+  type: NodePort
   ports:
   - port: 80
     targetPort: 9898
+    protocol: TCP
   selector:
     app: listings
 ---
