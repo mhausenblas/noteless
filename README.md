@@ -7,7 +7,7 @@ that contains some text and then you can view the results of the analysis.
 
 ### Capture
 
-You [capture](capture/) pictures containing text, ideally using your phone's camera:
+You [capture](http://mhausenblas.info/noteless/capture/) pictures containing text, ideally using your phone's camera:
 
 ![screenshot capture](docs/screenshot-noteless-capture.png)
 
@@ -15,7 +15,7 @@ Once you have captured a few text fragments, you move on to the analysis stage.
 
 ### Analyse
 
-You [analyse](notes/) by applying [predefined OPA Rego rules](https://github.com/mhausenblas/noteless/blob/aa4c6de9749c57a3381b56777351fed6c0a3c6f0/listings/main.go#L27) and if **noteless** recognizes a command like `up` or `go` it will list it:
+You [analyse](http://mhausenblas.info/noteless/notes/) by applying [predefined OPA Rego rules](https://github.com/mhausenblas/noteless/blob/aa4c6de9749c57a3381b56777351fed6c0a3c6f0/listings/main.go#L27) and if **noteless** recognizes a command like `up` or `go` it will list it:
 
 ![screenshot analytics](docs/screenshot-noteless-analysis.png)
 
