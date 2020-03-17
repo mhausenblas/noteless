@@ -32,7 +32,7 @@ This is a serverless end-to-end demo with an architecture as follows:
 1. [Amazon Rekognition](https://aws.amazon.com/rekognition/) for detecting text in images
 2. [AWS Lambda](https://aws.amazon.com/lambda/) for the capture/frontend processing
 3. [Amazon EKS](https://aws.amazon.com/eks/) on [AWS Fargate](https://aws.amazon.com/fargate/) for the event-driven analytics part with an [Open Policy Agent](https://www.openpolicyagent.org/) Rego-based set of rules.
-4. [Amazon S3](https://aws.amazon.com/s3/) and [Amazon DynamoDB](https://aws.amazon.com/dynamodb/) for storing the capture images and the detected text.
+4. [Amazon S3](https://aws.amazon.com/s3/) for storing the captured images and [Amazon DynamoDB](https://aws.amazon.com/dynamodb/) to persist the detected text in JSON format.
 
 
 ### Deploy yourself
