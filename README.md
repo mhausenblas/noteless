@@ -1,6 +1,6 @@
 # noteless
 
-The **noteless** serverless demo is available online through this page and allows you analyze pictures for certain command words ("go", "stop", "on", "off", "left", "right", "up", "down", "to"). First, you'd capture a picture 
+The **noteless** serverless demo is available online through this page and allows you to analyze pictures for certain command words ("go", "stop", "on", "off", "left", "right", "up", "down", "to"). First, you'd capture a picture 
 that contains some text and then you can view the results of the analysis.  
 
 ## Capture
